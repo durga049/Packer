@@ -65,6 +65,7 @@ build {
       "sudo cp webhooktesting/scorekeeper.js /var/www/html/scorekeeper.js",
       "sudo service nginx start",
       "sudo systemctl enable nginx",
+      "sudo systemctl status nginx",
       "curl https://get.docker.com | bash"
     ]
   }
