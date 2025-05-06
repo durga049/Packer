@@ -60,9 +60,9 @@ build {
       "sudo apt install git -y",
       "sudo git clone https://github.com/durga049/Colour_Game.git",
       "sudo rm -rf /var/www/html/index.nginx-debian.html",
-      "sudo cp webhooktesting/index.html /var/www/html/index.nginx-debian.html",
-      "sudo cp webhooktesting/style.css /var/www/html/style.css",
-      "sudo cp webhooktesting/scorekeeper.js /var/www/html/scorekeeper.js",
+      "sudo cp Colour_Game/index.html /var/www/html/index.nginx-debian.html",
+      "sudo cp Colour_Game/style.css /var/www/html/style.css",
+      "sudo cp Colour_Game/scorekeeper.js /var/www/html/scorekeeper.js",
       "sudo service nginx start",
       "sudo systemctl enable nginx",
       "curl https://get.docker.com | bash"
