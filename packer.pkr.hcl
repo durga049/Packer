@@ -58,7 +58,7 @@ build {
       "sudo apt update -y",
       "sudo apt install nginx -y",
       "sudo apt install git -y",
-      "sudo git clone https://github.com/mavrick202/webhooktesting.git",
+      "sudo git clone https://github.com/durga049/Colour_Game.git",
       "sudo rm -rf /var/www/html/index.nginx-debian.html",
       "sudo cp webhooktesting/index.html /var/www/html/index.nginx-debian.html",
       "sudo cp webhooktesting/style.css /var/www/html/style.css",
