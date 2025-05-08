@@ -1,0 +1,65 @@
+pipeline {
+    agent any
+	
+    environment {
+    AWS_REGION = 'ap-south-1'
+    }
+    stages {
+        stage('Git Clone') {
+            steps {
+                git url: 'https://github.com/durga049/Packer.git', branch: 'main'
+            }
+        }
+        stage('Initialize Packer') {
+            steps {
+                sh 'packer init packer.pkr.hcl'
+            }
+        }
+        stage('Validation') {
+            steps {
+                sh 'packer validate -var-file=variables.pkrvars.hcl packer.pkr.hcl'
+            }
+        }
+        stage('Build') {
+            steps {
+                // Run Packer build and capture the AMI ID
+                script {
+                    def packerOutput = sh(script: 'packer build -var-file=variables.pkrvars.hcl packer.pkr.hcl | tee packer_output.log', returnStdout: true).trim()
+                    // Extract AMI ID from Packer output (assuming it’s in the format "ami-xxxxxxxxxxxxxxxxx")
+                    def amiId = sh(script: "grep 'ami-' packer_output.log | awk '{print \$NF}' | tail -1", returnStdout: true).trim()
+                    // Store AMI ID in an environment variable for later use
+                    env.AMI_ID = amiId
+                    echo "Generated AMI ID: ${env.AMI_ID}"
+                }
+            }
+        }
+        stage('Launch EC2 Instance') {
+            steps {
+                script {
+                    // Use AWS CLI to launch an EC2 instance with the captured AMI ID
+                    sh """
+                    aws ec2 run-instances \
+                        --image-id ${env.AMI_ID} \
+                        --instance-type t2.micro \
+                        --region ${AWS_REGION} \
+                        --subnet-id subnet-033aa6337235ab7b2 \
+                        --security-group-ids sg-05e0f13e2a0980f5b \
+                        --key-name aws_key \
+                        --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=Packer-EC2-Instance}]'
+                    """
+                }
+            }
+        }
+    }
+    post {
+        always {
+            cleanWs()
+        }
+        failure {
+            echo 'Pipeline failed! Check logs for details.'
+        }
+        success {
+            echo 'Pipeline completed successfully!'
+        }
+    }
+}
